@@ -35,5 +35,5 @@ def output(filename, sheet, list1, list2, x, y, z):
     book.save(filename)
 
 
-output("test.xls", "test", ['CP 1', 'CP 2', 'CP 3'], ['1', '2', '3'], 'Julien Favre', 'ENOU Benjamin',
+output("test.xls", "test", ['CP 1', 'CP 2', 'CP 3'], ['1', '2', '3'], 'DUPOND Robert', 'DUPONT Roger',
        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
