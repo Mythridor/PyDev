@@ -11,7 +11,13 @@ def select_job():
         if cell.value == '':
             continue
         else:
-            print(cell.value)
+            #print(cell.value)
             liste.append(cell.value)
+        #liste.pop[0]
+        #liste.pop[-1]
+        #for i in liste:
+    liste.pop(0)
+    liste.pop(-1)
+    print(liste)
     return liste
 select_job()
