@@ -1,4 +1,4 @@
-#! /usr/local/bin/Python3.5
+#! /usr/local/bin/python3.6
 
 import xlwt
 from xlrd import open_workbook
@@ -6,7 +6,7 @@ from xlrd import open_workbook
 
 def output():
     book = xlwt.Workbook()
-    wb = open_workbook("input.xlsx")
+    wb = open_workbook("input/input.xlsx")
 
     wb2 = xlwt.Workbook()
     Sheet1 = wb2.add_sheet('Evaluation')
@@ -29,7 +29,7 @@ def output():
             if s.cell(ctr, 3).value != "":
                 Sheet1.write(row, subcp, s.cell(ctr, 3).value)
 
-        wb2.save('test.xls')
+        wb2.save('evalFiche/test.xls')
 
 
 output()
