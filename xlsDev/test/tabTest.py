@@ -9,20 +9,30 @@ s = wb2.add_sheet('Evaluation', cell_overwrite_ok=True)
 listeComp = [
     ["test", "a", "e"],
     ["test", "b", "f"],
-    ["test", "c", "g"]
+    ["test", "b", "g"],
+    ["test", "d", "g"]
 ]
 
-for row in range(0, 3):
-    for col in range(0, 3):
+range_y = range(0, len(listeComp))
+range_x = range(0, len(listeComp[0]))
+
+for row in range_y:
+    for col in range_x:
         s.write(row, col, listeComp[row][col])
 
 wb2.save('test.xls')
 
 wb = open_workbook("test.xls")
 s2 = wb.sheet_by_index(0)
-for y in range(0, 3):
-    for x in range(0, 3):
-        if y - 1 >= 0 and s2.cell(y - 1, x).value == s2.cell(y, x).value:
-            s.write_merge(y - 1, y + 1, x, x, listeComp[y][x])
+n = 0
+for row in range_y:
+    for col in range_x:
+        print(row, " ", row - n, " ", n, col == (len(range_x) - 1))
+        # print((s2.cell(row - 1, col).value == s2.cell(row, col).value), ":", s2.cell(row - 1, col).value, "[", row - 1,"] / ", s2.cell(row, col).value, "[", row, "] ")
+        if (row - 1 >= 0) and (s2.cell(row - 1, col).value == s2.cell(row, col).value):
+            s.write_merge(row - n, row, col, col, listeComp[row][col])
+
+        if col == (len(range_x) - 1):
+            n += 1
 
 wb2.save('test.xls')
