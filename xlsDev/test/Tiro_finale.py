@@ -10,7 +10,7 @@ from xlutils.copy import copy
 import selection_fonctions
 from xlwt import easyxf
 import get_colon
-#import tabTest2
+import tabTest2
 import get_ones
 import re
 #######
@@ -51,11 +51,6 @@ while True:
                 elif ones[x][0] == 1.0:
                     Skills4Job.append(liste_competences[x])
             longueur = len(Skills4Job)
-            buffer = 20
-            for count, data in enumerate(Skills4Job):
-                # count est le compteur de lignes (c'est un chiffre integer)
-                # data correspond à l'item numéro "count" de Skill4Job (data = Skill4Job[count])
-                for element in range(0, 4):
-                    # element est l'index entre 0 et 4 pour chaque élément de la liste data
-                    offset = count+buffer
-                    print(data[element], offset) # chaque count est décalée de 20 lignes.
+            # Passage à l"écriture
+            tabTest2.writeout(Skills4Job)
+
