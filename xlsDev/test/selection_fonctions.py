@@ -14,6 +14,6 @@ def select_job():
             liste.append(cell.value)
     liste.pop(0)
     liste.pop(-1)
-    print(liste)
+    #print(liste)
     return liste
-select_job()
+#select_job()
