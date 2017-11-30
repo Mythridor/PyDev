@@ -10,11 +10,5 @@ def get_skills():
         for col_x in range(0,4):
             intermediaire.append(matrix.cell(row_x, col_x).value)
         liste.append(intermediaire)
-    liste.pop(-1) # suppression d'une liste vide
-    #print(liste)
+    liste.pop(-1)  # suppression d'une liste vide
     return liste
-#a = get_skills()
-#print(a[45])
-    #for i in liste:
-     #   print(i)
-#final()

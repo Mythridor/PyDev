@@ -51,6 +51,6 @@ while True:
                 elif ones[x][0] == 1.0:
                     Skills4Job.append(liste_competences[x])
             longueur = len(Skills4Job)
-            # Passage à l"écriture
+            # Passage à l'écriture
             tabTest2.writeout(Skills4Job)
 
