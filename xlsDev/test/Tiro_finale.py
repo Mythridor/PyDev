@@ -5,7 +5,9 @@
 
 ####### Importation des scripts essentiels #######
 from xlrd import open_workbook
+from xlwt import Workbook
 from xlutils.copy import copy
+from xlutils.styles import Styles
 from xlwt import easyxf
 import re
 
@@ -55,21 +57,31 @@ def select_colon(fonction):
     return colonne
 
 def writeout(lista):
-    source = open_workbook("test.xls", formatting_info=True, )  # Ouverture du fichier test.xls
-    wb = copy(source)  # Passage de format xlrd à xlwt
-    #ns = wb.add_sheet("Test-ecriture", cell_overwrite_ok=True)  # Création d'une feuille vierge pour tester
-    ws = wb.get_sheet(0)  # Sélection de la page "Test-ecriture" dans fichier source
+    source = open_workbook("test.xls", formatting_info=True).sheet_by_index(1)  # Ouverture du fichier test.xls avec xlrd
+    #s = Styles(source)
     buffer = 19
+    longueur=len(lista) # longueur de la liste
+    w2 = Workbook()
+    wb2 = w2.add_sheet(sheetname="Evalutation",cell_overwrite_ok=True)
     plain = easyxf('font: name Calibri, height 220')
-    for count, data in enumerate(lista):
-        # count est le compteur de lignes (c'est un chiffre entier)
-        # data (qui est une liste) correspond à l'item numéro "count" de Skill4Job (data = Skill4Job[count])
-        for element in range(0, 4):
-            # element est l'index entre 0 et 4 pour chaque élément de la liste data
-            offset = count + buffer # chaque count est décalée de 20 lignes.
-            ws.write(offset,element,data[element],plain) # ici element correspond également à la colonne de chaque liste
-            print(data[element], offset)
-    wb.save('output_write.xls')
+    for rowsx in range(0, source.nrows):
+        for colsx in range(0,source.ncols):
+            if rowsx < 19:
+                wb2.write(rowsx, colsx, source.cell(rowsx,colsx).value, plain)
+                #print(source.cell(rowsx,colsx).value)
+            if rowsx == 19:
+                for count, data in enumerate(lista):
+                            # count est le compteur de lignes (c'est un chiffre entier)
+                            # data (qui est une liste) correspond à l'item numéro "count" de Skill4Job (data = Skill4Job[count])
+                    for element in range(0, 4):
+                                # element est l'index entre 0 et 4 pour chaque élément de la liste data
+                        offset = count + buffer  # chaque count est décalée de 20 lignes.
+                        wb2.write(offset, element, data[element], plain)  # ici element correspond également à la colonne de chaque liste
+                        #print(data[element], offset)
+                        continue
+            elif rowsx >=19:
+                wb2.write(rowsx+longueur, colsx, source.cell(rowsx, colsx).value, plain)
+    w2.save('output_write.xls')
 #######
 
 confirmation = ''  # Critère d'arrêt de boucle while
