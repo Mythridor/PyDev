@@ -68,9 +68,13 @@ def writeout(lista, job):
     for rowsx in range(0, source.nrows):
         for colsx in range(0,source.ncols):
             if rowsx < 19:
+                if rowsx == 5 :
+                    for colsx in range(0,1):
+                        wb2.write(rowsx, colsx, source.cell(rowsx,colsx).value, plain)
+                    wb2.write(rowsx, 2, job,plain)
                 wb2.write(rowsx, colsx, source.cell(rowsx, colsx).value, plain)
-                #blocker1 += 1
-            elif rowsx == 19 and blocker <1:
+
+            elif rowsx == 19:
                 for row, data in enumerate(lista):
                             # count est le compteur de lignes (c'est un chiffre entier)
                             # data (qui est une liste) correspond à l'item numéro "count" de Skill4Job (data = Skill4Job[count])
@@ -79,39 +83,17 @@ def writeout(lista, job):
                         offset = row + buffer  # chaque count est décalée de 20 lignes.
                         wb2.write(offset, col, element, plain)  # ici element correspond également à la colonne de chaque liste
                         #print(data[element], offset)
-                        blocker +=1
+                        #blocker +=1
             elif rowsx > 19:
                 wb2.write(rowsx+longueur, colsx, source.cell(rowsx, colsx).value, plain)
     w2.save('output/output_{}.xls'.format(job))
     #w2.save('output_write.xls')
 #######
 
-#confirmation = ''  # Critère d'arrêt de boucle while
 liste_fonctions = select_job()  # Liste de fonctions
 liste_competences = get_skills()  # Liste des compétences
 
 for job in liste_fonctions:
-#while True:
-    #if confirmation == "O" or confirmation == "Oui" or confirmation == 'OUI' \
-     #       or confirmation == 'yes' or confirmation == 'Y':
-     #   break  # condition d'arrêt de boucle
-    #if confirmation == "q" or confirmation == "exit" or confirmation == "quit":
-    #    break
-    #sujet_fonction = str.capitalize(input("Quel est la fonction du sujet? (q pour quitter)\n"))
-    #pattern = re.compile(sujet_fonction)
-
-    #match = list(filter(pattern.match, liste_fonctions))  # noms de fonctions correspondant à la recherche
-
-    #if len(match) > 1:
-    #    print("Plusieurs intitulés de fonctions correspondent à votre recherche. Voici la liste:")
-    #    for i in match:
-    #        print(i)
-    #else:
-    #    print('Vous avez choisi la fonction suivante:', match[0])
-    #    confirmation = str.capitalize(input("Confirmez-vous la sélection? [oui/non]\n"))
-    #    if confirmation == "Oui" or confirmation == "O" or confirmation == 'OUI' or confirmation == 'YES' \
-     #           or confirmation == 'Y':
-     #       col_x = select_colon(match[0])
             col_x = select_colon(job)
             ones = values(col_x[0])
             Skills4Job = list()
