@@ -5,12 +5,9 @@
 
 ####### Importation des scripts essentiels #######
 from xlrd import open_workbook
-import newOutput2
-from xlwt import Workbook
 from xlutils.copy import copy
-from xlutils.styles import Styles
 from xlwt import easyxf
-import re
+
 
 def get_skills():
     matrix = open_workbook("matrix.xls", formatting_info=True).sheet_by_index(1)
@@ -58,14 +55,12 @@ def select_colon(fonction):
     return colonne
 
 def writeout(lista, job):
-    source = open_workbook("test.xls", formatting_info=True).sheet_by_index(1)  # Ouverture du fichier test.xls avec xlrd
-
+    source = open_workbook("test.xls", formatting_info=True).sheet_by_index(1)# Ouverture du fichier test.xls avec xlrd
+    source2 = open_workbook("base.xls",formatting_info=True).sheet_by_index(0)
     input_wb = open_workbook("base.xls",formatting_info=True)
-    #fin_fichier = open_workbook("test.xls", formatting_info=True)
-    #copie_fin_fichier = copy(fin_fichier)
-    #sheet_fin_fichier = copie_fin_fichier.get_sheet(1)
     copy_wb = copy(input_wb)
     sheet = copy_wb.get_sheet(1)
+    sheet2 = copy_wb.get_sheet(0)
     buffer = 19
     longueur=len(lista) # longueur de la liste
     plain = easyxf('font: name Calibri, height 220; border: left thin, right thin, top thin, bottom thin;\
@@ -82,22 +77,23 @@ def writeout(lista, job):
 
             elif rowsx == 19:
                 for row, data in enumerate(lista):
-                             # count est le compteur de lignes (c'est un chiffre entier)
-                             # data (qui est une liste) correspond à l'item numéro "count" de Skill4Job (data = Skill4Job[count])
+                             # row est le compteur de lignes (c'est un chiffre entier)
+                             # data (qui est une liste) correspond à l'item numéro "row" de Skill4Job (data = Skill4Job[count])
                     for col,element in enumerate(data):
-#                                  element est la valeur pour chaque élément de la liste data
+#                                  element est la valeur pour chaque élément de la liste data à l'index "col"
                         offset = row + buffer
                         for i in range(4, source.ncols):
                             sheet.write(offset, i, None, plain)
                         offset = row + buffer  # chaque count est décalée de 20 lignes.
                         sheet.write(offset, col, element, plain)
-                        #sheet.write(offset, col, '', plain)
-                        #col +=1
-                          # ici col correspond à la colonne de chaque liste
-            #elif rowsx > 19:
-            #    sheet.write(rowsx+longueur, colsx, source.cell(rowsx, colsx).value, plain)
+
+    # Pour la feuille 0, copie intégrale et rectification de la couleur:
+    for rowsx in range(0, source2.nrows):
+        for colsx in range(0,source2.ncols):
+            sheet2.write(rowsx, colsx, source2.cell(rowsx, colsx).value, plain)
+
     copy_wb.save('output/output_{}.xls'.format(job))
-#     #w2.save('output_write.xls')
+#
 #######
 
 liste_fonctions = select_job()  # Liste de fonctions
@@ -114,5 +110,5 @@ for job in liste_fonctions:
                     Skills4Job.append(liste_competences[x])
             longueur = len(Skills4Job)
             # Passage à l'écriture
-            #writeout(Skills4Job, job)
+
             writeout(Skills4Job,job)
