@@ -1,37 +1,44 @@
 #! /usr/local/bin/python3.6
 
-import sqlite3
-from flask import Flask, render_template, request, redirect
 import os
+import sqlite3
+
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
 
-def db_populate():
-    users = list()
-    conn = sqlite3.connect('ma_base.db')
-    cursor = conn.cursor()
-    users.append(("Benjamin ENOU", "Développeur"))
-    users.append(("Julien FAVRE", "Chef de projet"))
-    cursor.executemany("""
-    INSERT INTO users(identifiant, fonction) VALUES(?, ?)""", users)
+def db_connection(name):
+    conn = sqlite3.connect(name)
+    return conn.cursor(), conn
+
+
+def request_executor(db_name, requete):
+    cursor, conn = db_connection(db_name)
+    cursor.execute(requete)
+    db_end_transaction(conn)
+
+
+def db_end_transaction(conn):
     conn.commit()
     conn.close()
 
-
 def db_init():
-    conn = sqlite3.connect('ma_base.db')
-    cursor = conn.cursor()
     print(" * LOGGER >>> Checking Database...")
-    cursor.execute("""
+    request_executor('ma_base.db', """DROP TABLE 'users'""")
+    request_executor('ma_base.db', """
     CREATE TABLE IF NOT EXISTS users(
          id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
          identifiant TEXT,
          fonction TEXT)
          """)
-    conn.commit()
-    conn.close()
-    db_populate()
+    users = list()
+    users.append(("Benjamin ENOU", "Développeur"))
+    users.append(("Julien FAVRE", "Chef de projet"))
+    cursor, conn = db_connection('ma_base.db')
+    cursor.executemany("""
+    INSERT INTO users(identifiant, fonction) VALUES(?, ?)""", users)
+    db_end_transaction(conn)
 
 
 @app.route("/generate_fiche")
