@@ -2,10 +2,39 @@
 
 import os
 import sqlite3
+import time
+from functools import wraps
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response
 
 app = Flask(__name__)
+
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'admin' and password == 'test'
+
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        print(auth)
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 def db_connection(name):
@@ -23,8 +52,10 @@ def db_end_transaction(conn):
     conn.commit()
     conn.close()
 
+
 def db_init():
-    print(" * LOGGER >>> Checking Database...")
+    start_time = time.time()
+    print(" * [LOGGER] >>> Checking database...")
     request_executor('ma_base.db', """DROP TABLE 'users'""")
     request_executor('ma_base.db', """
     CREATE TABLE IF NOT EXISTS users(
@@ -33,12 +64,13 @@ def db_init():
          fonction TEXT)
          """)
     users = list()
-    users.append(("Benjamin ENOU", "Développeur"))
-    users.append(("Julien FAVRE", "Chef de projet"))
+    users.append(("Tintin", "Humain"))
+    users.append(("Milou", "Chien"))
     cursor, conn = db_connection('ma_base.db')
     cursor.executemany("""
     INSERT INTO users(identifiant, fonction) VALUES(?, ?)""", users)
     db_end_transaction(conn)
+    print(" * [LOGGER] >>> Database checked in " + "{:.3f}".format(time.time() - start_time) + "s...")
 
 
 @app.route("/generate_fiche")
@@ -55,23 +87,8 @@ def ma_page_erreur(error):
 
 
 @app.route("/")
+@requires_auth
 def hello():
-    return render_template('accueil.html')
-
-
-@app.route("/download")
-def download():
-    mail = request.args['mail']
-    password = request.args['password']
-
-    if mail == "test@test.test" and password == "test":
-        return redirect('/dashboard')
-    else:
-        return "Authentication failed!"
-
-
-@app.route("/dashboard")
-def success():
     result = "<!DOCTYPE html><html>" \
              "<head></head>" \
              "<body>" \
@@ -87,7 +104,6 @@ def success():
     result += "</select><br /><input style='margin: auto;' type='submit' value='Sélectionner' /></form></div><a href='/generate_fiche'>Génération de fiches</a></body></html>"
     conn.close()
     return result.encode('utf-8')
-
 
 if __name__ == '__main__':
     db_init()
