@@ -25,7 +25,7 @@ def db_end_transaction(conn):
 
 def db_init():
     print(" * LOGGER >>> Checking Database...")
-    request_executor('ma_base.db', """DROP TABLE 'users'""")
+    request_executor('ma_base.db', """ DROP TABLE IF EXISTS 'users'""")
     request_executor('ma_base.db', """
     CREATE TABLE IF NOT EXISTS users(
          id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -43,7 +43,7 @@ def db_init():
 
 @app.route("/generate_fiche")
 def evalFicheGenerator():
-    os.system("python3.6 fiche_eval_generator.py")
+    os.system("python Tiro_finale_auto2.py")
     return redirect("/dashboard")
 
 
@@ -73,7 +73,10 @@ def download():
 @app.route("/dashboard")
 def success():
     result = "<!DOCTYPE html><html>" \
-             "<head></head>" \
+             "<head>" \
+             "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css' integrity='sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb' crossorigin='anonymous'>" \
+             "< script src = 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js' integrity = 'sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ' crossorigin = 'anonymous' ></script >"
+    "</head>" \
              "<body>" \
              "<h1 style='text-align: center;'>Veuillez sélectionner le collaborateur dont vous souhaitez faire l'évaluation</h1>" \
              "<div style='width: 17%; margin: auto; border: 2px solid black; border-radius: 5px; padding: 15px;'><form action='/test'><select name='role'>"
