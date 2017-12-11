@@ -4,9 +4,10 @@ import os
 import sqlite3
 import time
 import get_names
+import urllib
 from functools import wraps
 
-from flask import Flask, render_template, request, redirect, Response
+from flask import Flask, render_template, request, redirect, Response, send_from_directory
 
 app = Flask(__name__)
 
@@ -67,8 +68,8 @@ def db_init():
     request_executor('ma_base.db', """
     CREATE TABLE IF NOT EXISTS users(
          id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-         nom TEXT,
          prenom TEXT,
+         nom TEXT,
          fonction TEXT)
          """)
     users = list()
@@ -77,15 +78,21 @@ def db_init():
         users.append(item)
     cursor, conn = db_connection('ma_base.db')
     cursor.executemany("""
-    INSERT INTO users(nom, prenom, fonction) VALUES(?, ?, ?)""", users)
+    INSERT INTO users(prenom, nom, fonction) VALUES(?, ?, ?)""", users)
     db_end_transaction(conn)
     print(" * [LOGGER] >>> Database checked in " + "{:.3f}".format(time.time() - start_time) + "s...")
 
 
 @app.route("/generate_fiche")
 def evalFicheGenerator():
-    os.system("python3.6 fiche_eval_generator.py")
-    return redirect("/dashboard")
+    os.system("python fiche_eval_generator.py")
+    return redirect("boot.html")
+
+@app.route("/static/output/<value>", methods=["get"])
+def redir(value):
+    new_val=value[7:]
+    return send_from_directory("static/output/",new_val)
+
 
 @app.route("/")
 @requires_auth
