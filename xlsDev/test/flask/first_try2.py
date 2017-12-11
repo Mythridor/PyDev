@@ -3,6 +3,7 @@
 import os
 import sqlite3
 import time
+import get_names
 from functools import wraps
 
 from flask import Flask, render_template, request, redirect, Response
@@ -66,15 +67,17 @@ def db_init():
     request_executor('ma_base.db', """
     CREATE TABLE IF NOT EXISTS users(
          id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-         identifiant TEXT,
+         nom TEXT,
+         prenom TEXT,
          fonction TEXT)
          """)
     users = list()
-    users.append(("Tintin", "Humain"))
-    users.append(("Milou", "Chien"))
+    liste= get_names.get_names()
+    for item in liste:
+        users.append(item)
     cursor, conn = db_connection('ma_base.db')
     cursor.executemany("""
-    INSERT INTO users(identifiant, fonction) VALUES(?, ?)""", users)
+    INSERT INTO users(nom, prenom, fonction) VALUES(?, ?, ?)""", users)
     db_end_transaction(conn)
     print(" * [LOGGER] >>> Database checked in " + "{:.3f}".format(time.time() - start_time) + "s...")
 
