@@ -8,5 +8,10 @@ pipeline {
                 sh 'python --version'
             }
         }
+        stage('Build') {
+            steps {
+                sh 'printenv'
+            }
+        }
     }
 }
